@@ -1,0 +1,74 @@
+class TemperatureController:
+
+    def __init__(self):
+        self.previous_mode = "off"
+
+        self.cool_on = 28
+        self.cool_off = 24
+        self.heat_on = 18
+        self.heat_off = 21
+
+    def choose_mode(self, temperature, occupancy):
+
+ 
+        if occupancy == 0:
+            return "off"
+
+        if self.previous_mode == "cool":
+            if temperature > self.cool_off:
+                return "cool"
+
+        if self.previous_mode == "heat":
+            if temperature < self.heat_off:
+                return "heat"
+
+        if temperature >= self.cool_on:
+            return "cool"
+
+        if temperature <= self.heat_on:
+            return "heat"
+
+        return "off"
+
+    def control_system(self, temperature, occupancy):
+
+        target_mode = self.choose_mode(
+            temperature, occupancy
+        )
+
+        if target_mode != self.previous_mode:
+            command = "SET_MODE " + target_mode
+        else:
+            command = "NO COMMAND"
+
+        self.previous_mode = target_mode
+
+        return target_mode, command
+
+
+controller = TemperatureController()
+
+test_cases = [
+    (28, 2),
+    (28, 2),
+    (26, 2),
+    (24, 2),
+    (18, 1),
+    (19, 1),
+    (21, 1),
+    (28, 2),
+    (30, 0)
+]
+
+for i, (temperature, occupancy) in enumerate(test_cases, 1):
+
+    target_mode, command = controller.control_system(
+        temperature, occupancy
+    )
+
+    print(
+        f"Step {i}: Temperature={temperature}°C, "
+        f"Occupancy={occupancy}, "
+        f"Mode={target_mode}, "
+        f"Command={command}"
+    )
